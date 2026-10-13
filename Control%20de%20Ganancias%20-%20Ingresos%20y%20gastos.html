@@ -1,0 +1,1393 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:0;padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+    /* ===== MODO ANIMACIONES A TOPE ===== */
+    :root {
+      --motion-ease: cubic-bezier(.22, 1, .36, 1);
+      --motion-glow: rgba(124, 58, 237, .22);
+    }
+    html { scroll-behavior: smooth; }
+    body { isolation: isolate; overflow-x: hidden; }
+    body::after {
+      content: "";
+      position: fixed; inset: -25%; z-index: -1; pointer-events: none;
+      opacity: .55;
+      background:
+        radial-gradient(circle at 18% 35%, rgba(56,189,248,.13), transparent 24%),
+        radial-gradient(circle at 78% 18%, rgba(168,85,247,.14), transparent 26%),
+        radial-gradient(circle at 70% 78%, rgba(16,185,129,.10), transparent 24%);
+      background-size: 130% 130%;
+      animation: ambient-drift 22s ease-in-out infinite alternate;
+    }
+    @keyframes ambient-drift {
+      0% { transform: translate3d(-2%, -1%, 0) rotate(0deg) scale(1); background-position: 0% 20%; }
+      50% { transform: translate3d(2%, 1%, 0) rotate(3deg) scale(1.04); background-position: 70% 60%; }
+      100% { transform: translate3d(-1%, 3%, 0) rotate(-2deg) scale(1.08); background-position: 100% 10%; }
+    }
+    header.app-header {
+      transition: box-shadow .35s ease, background-color .35s ease;
+      animation: header-drop .65s var(--motion-ease) both;
+    }
+    @keyframes header-drop {
+      from { opacity: 0; transform: translateY(-22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    main { animation: main-arrive .8s .08s var(--motion-ease) both; }
+    @keyframes main-arrive {
+      from { opacity: 0; transform: translateY(16px) scale(.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .bg-cardDark, #tab-movimientos > div, #tab-resumen > div, #tab-mensual > div,
+    #listaMovimientos > div, #listaCategorias > div, #listaMensual > div {
+      transform-origin: center;
+      transition: transform .28s var(--motion-ease), box-shadow .3s ease, border-color .3s ease;
+    }
+    .bg-cardDark:hover, #listaMovimientos > div:hover, #listaCategorias > div:hover,
+    #listaMensual > div:hover {
+      transform: translateY(-3px) scale(1.008);
+      box-shadow: 0 12px 28px rgba(91,33,182,.10), 0 2px 6px rgba(30,41,59,.04);
+      border-color: rgba(167,139,250,.75);
+    }
+    .anim-item { animation: card-spring .65s var(--motion-ease) both; }
+    @keyframes card-spring {
+      0% { opacity: 0; transform: translateY(20px) scale(.965); filter: blur(3px); }
+      65% { opacity: 1; transform: translateY(-2px) scale(1.008); filter: blur(0); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    button, label[for], input, select, textarea {
+      transition: transform .2s var(--motion-ease), box-shadow .25s ease,
+        border-color .25s ease, background-color .25s ease, color .2s ease;
+    }
+    button { position: relative; overflow: hidden; }
+    button:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 18px rgba(124,58,237,.16);
+    }
+    button:not(:disabled):active { transform: translateY(1px) scale(.94); }
+    button::after {
+      content: ""; position: absolute; top: -80%; left: -65%; width: 42%; height: 260%;
+      transform: rotate(22deg); pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.36), transparent);
+      transition: left .65s var(--motion-ease);
+    }
+    button:hover::after { left: 135%; }
+    input:focus, select:focus, textarea:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 4px rgba(124,58,237,.11), 0 5px 16px rgba(124,58,237,.08);
+    }
+    .app-nav {
+      animation: nav-rise .6s .2s var(--motion-ease) both;
+      box-shadow: 0 -8px 28px rgba(36,31,61,.06);
+    }
+    @keyframes nav-rise {
+      from { opacity: 0; transform: translateY(100%); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .app-nav button { border-radius: 14px; min-width: 76px; }
+    .app-nav button.text-accent {
+      background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(167,139,250,.08));
+      animation: nav-selected .38s var(--motion-ease) both;
+    }
+    @keyframes nav-selected {
+      0% { transform: scale(.88); }
+      65% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    .icon-glow { animation: icon-glow 2s ease-in-out infinite, wallet-float 3.4s ease-in-out infinite; }
+    @keyframes wallet-float {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-2px) rotate(-4deg); }
+    }
+    .pulse-pop { animation: number-bounce .55s var(--motion-ease); }
+    @keyframes number-bounce {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.22) rotate(-2deg); color: #059669; text-shadow: 0 0 18px rgba(16,185,129,.28); }
+      65% { transform: scale(.96) rotate(1deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+    #progresoBarra { border-radius: inherit; transition: width 1.1s var(--motion-ease); }
+    #progresoBarra::after { animation: shimmer 1.3s ease-in-out infinite; }
+    #progresoBarra[style*="100%"] { animation: goal-glow 1.4s ease-in-out infinite alternate; }
+    @keyframes goal-glow {
+      from { filter: drop-shadow(0 0 1px rgba(16,185,129,.2)); }
+      to { filter: drop-shadow(0 0 8px rgba(16,185,129,.65)); }
+    }
+    #graficoCategorias svg rect { transform-box: fill-box; transform-origin: bottom; animation: bar-grow .9s var(--motion-ease) both; }
+    @keyframes bar-grow {
+      from { transform: scaleY(.02); opacity: .25; }
+      to { transform: scaleY(1); opacity: 1; }
+    }
+    #toast { box-shadow: 0 12px 35px rgba(91,33,182,.2); animation: toast-pop .42s var(--motion-ease) both; }
+    @keyframes toast-pop {
+      0% { opacity: 0; transform: translate(-50%, 22px) scale(.8); }
+      70% { opacity: 1; transform: translate(-50%, -3px) scale(1.04); }
+      100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    }
+    .motion-ripple {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      background: rgba(255,255,255,.55); transform: scale(0);
+      animation: ripple-burst .65s ease-out forwards;
+    }
+    @keyframes ripple-burst {
+      to { transform: scale(4); opacity: 0; }
+    }
+    .section-heading-animate { animation: heading-sweep .55s var(--motion-ease) both; }
+    @keyframes heading-sweep {
+      from { opacity: 0; transform: translateX(-12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .confetti-piece { box-shadow: 0 0 5px rgba(255,255,255,.35); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important; transition-duration: .01ms !important;
+      }
+    }
+
+
+    .monthly-chart-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: #C4B5FD transparent; }
+    .monthly-bar { opacity: 0; animation: monthly-bar-in .45s ease-out forwards; }
+    @keyframes monthly-bar-in { from { opacity: 0; } to { opacity: 1; } }
+    .monthly-bar-rect { transition: filter .25s ease, opacity .25s ease; }
+    .monthly-bar:hover .monthly-bar-rect { filter: drop-shadow(0 3px 7px rgba(124,58,237,.35)); opacity: .88; }
+
+
+    /* Fix: keep the native date picker inside its card on narrow mobile screens */
+    #inputFecha {
+      display: block;
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      font-size: 14px;
+      padding: 9px 10px;
+      line-height: 1.35;
+    }
+    #inputFecha::-webkit-date-and-time-value {
+      text-align: left;
+      min-height: 1.35em;
+    }
+    #inputFecha::-webkit-calendar-picker-indicator {
+      margin: 0;
+      padding: 0 0 0 6px;
+    }
+    @media (max-width: 480px) {
+      #inputFecha {
+        font-size: 13px;
+        padding: 8px 9px;
+      }
+    }
+
+  
+    /* Animaciones pensadas para móvil: visibles también al tocar, no solo con hover */
+    @media (max-width: 768px) {
+      html { scroll-behavior: smooth; }
+      .app-header {
+        animation: mobile-header-in .65s cubic-bezier(.2,.8,.2,1) both;
+      }
+      @keyframes mobile-header-in {
+        from { opacity: 0; transform: translateY(-12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      main > section, main > div, #tabMovimientos > *, #tabResumen > *, #tabMensual > * {
+        animation: mobile-content-in .55s cubic-bezier(.2,.8,.2,1) both;
+      }
+      @keyframes mobile-content-in {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      /* Pequeños rebotes al tocar botones y navegación: se activan en pantallas táctiles */
+      button, [role="button"] {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+      }
+      button:active, [role="button"]:active {
+        transform: scale(.96);
+        filter: brightness(1.08);
+      }
+      input, select, textarea {
+        transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+      }
+      input:focus, select:focus, textarea:focus {
+        box-shadow: 0 0 0 3px rgba(124,58,237,.16);
+      }
+      .app-nav button:active {
+        transform: translateY(-3px) scale(.95);
+      }
+      #graficoCategorias svg rect, #graficoMensual svg rect {
+        transform-box: fill-box;
+        transform-origin: bottom;
+        animation: mobile-bar-rise .85s cubic-bezier(.2,.8,.2,1) both;
+      }
+      @keyframes mobile-bar-rise {
+        from { transform: scaleY(.05); opacity: .25; }
+        to { transform: scaleY(1); opacity: 1; }
+      }
+      .bg-cardDark {
+        transition: transform .22s ease, box-shadow .22s ease;
+      }
+      .bg-cardDark:active {
+        transform: scale(.99);
+        box-shadow: 0 5px 18px rgba(124,58,237,.12);
+      }
+    }
+    @media (hover: none) and (pointer: coarse) {
+      button:hover { filter: none; }
+      button:active { box-shadow: 0 5px 18px rgba(124,58,237,.2); }
+    }
+
+  
+    /* Evita el hueco superior en iPhone al abrir la app como archivo/web-app */
+    :root { padding-top: 0 !important; }
+    body { padding-top: 0 !important; margin-top: 0 !important; }
+    header.app-header { margin-top: 0 !important; }
+  </style></head><body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#F4F6FC">
+  <title>Control de Ganancias</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bgDark: '#F4F6FC',
+            cardDark: '#FFFFFF',
+            cardDark2: '#EDE9FE',
+            inputBg: '#FFFFFF',
+            accent: '#7C3AED',
+            accentDark: '#5B21B6',
+            accentLight: '#A78BFA',
+            textLight: '#241F3D',
+            textMuted: '#6C6F93',
+            borderSoft: '#E3E6F7',
+            danger: '#EF4444',
+            ink: '#FFFFFF'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Ocultar barra de desplazamiento manteniendo funcionalidad */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    :root { background: #F4F6FC; }
+    body {
+      background: #F4F6FC;
+      position: relative;
+    }
+    /* Aurora de fondo: manchas de color en movimiento lento */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(480px circle at 15% 10%, rgba(59,130,246,0.16), transparent 60%),
+        radial-gradient(480px circle at 85% 25%, rgba(139,92,246,0.16), transparent 60%),
+        radial-gradient(420px circle at 50% 95%, rgba(16,185,129,0.14), transparent 60%);
+      animation: aurora-shift 14s ease-in-out infinite alternate;
+    }
+    @keyframes aurora-shift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-3%, 3%) scale(1.08); }
+    }
+    header.app-header {
+      padding-top: 0.75rem;
+      backdrop-filter: blur(6px);
+    }
+    nav.app-nav {
+      padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+      backdrop-filter: blur(6px);
+    }
+
+    /* Confeti */
+    @keyframes confetti-fall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0.9; }
+    }
+    .confetti-piece {
+      position: absolute;
+      top: -10px;
+      width: 8px;
+      height: 14px;
+      border-radius: 2px;
+      animation: confetti-fall linear forwards;
+    }
+
+    /* Entrada escalonada de tarjetas */
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .anim-item {
+      animation: fade-in-up 0.35s ease-out both;
+    }
+
+    /* Cambio de pestaña */
+    @keyframes tab-in {
+      0% { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .tab-anim {
+      animation: tab-in 0.25s ease-out both;
+    }
+
+    /* Pulso al actualizarse un número */
+    @keyframes pulse-pop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.18); color: #10B981; }
+      100% { transform: scale(1); }
+    }
+    .pulse-pop {
+      animation: pulse-pop 0.4s ease-out;
+    }
+
+    /* Brillo de la barra de progreso */
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    #progresoBarra {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, #3B82F6, #10B981, #8B5CF6);
+    }
+    #progresoBarra::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+      animation: shimmer 1.8s ease-in-out infinite;
+    }
+
+    /* Toast de confirmación */
+    @keyframes toast-in {
+      0% { opacity: 0; transform: translate(-50%, 14px); }
+      100% { opacity: 1; transform: translate(-50%, 0); }
+    }
+    #toast {
+      animation: toast-in 0.25s ease-out both;
+    }
+
+    /* Glow sutil del icono de la cabecera */
+    @keyframes icon-glow {
+      0%, 100% { filter: drop-shadow(0 0 0px rgba(124,58,237,0)); }
+      50% { filter: drop-shadow(0 0 6px rgba(124,58,237,0.7)); }
+    }
+    .icon-glow {
+      animation: icon-glow 2.5s ease-in-out infinite;
+    }
+
+    /* Botones y tarjetas con respuesta táctil */
+    button, label[for], .tocable {
+      transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+
+    /* Tarjetas: pequeño realce al pasar el cursor/dedo */
+    .bg-cardDark {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .bg-cardDark:hover {
+      box-shadow: 0 4px 14px rgba(124,58,237,0.10);
+    }
+
+    /* Icono de pestaña: pequeño "pop" al activarse */
+    @keyframes icon-pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.35) rotate(-6deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .icon-pop {
+      animation: icon-pop 0.4s ease;
+    }
+  </style>
+</head>
+<body class="bg-bgDark text-textLight min-h-screen flex flex-col font-sans antialiased select-none pb-20">
+
+  <!-- Header -->
+  <header class="app-header bg-cardDark px-4 py-3 border-b border-borderSoft flex justify-between items-center sticky top-0 z-10 shadow-md">
+    <div class="flex items-center space-x-2">
+      <i data-lucide="wallet" class="text-accent w-6 h-6 icon-glow"></i>
+      <h1 class="text-lg font-bold tracking-wide">Control de Ganancias</h1>
+    </div>
+    <div class="flex space-x-2">
+      <button onclick="exportarDatos()" class="p-2 text-textMuted hover:text-textLight rounded-lg hover:bg-accent/10 transition" title="Exportar datos">
+        <i data-lucide="download" class="w-5 h-5"></i>
+      </button>
+      <label class="p-2 text-textMuted hover:text-textLight rounded-lg hover:bg-accent/10 transition cursor-pointer" title="Importar datos">
+        <i data-lucide="upload" class="w-5 h-5"></i>
+        <input type="file" id="importInput" accept=".json" onchange="importarDatos(event)" class="hidden">
+      </label>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 p-4 max-w-md mx-auto w-full">
+
+    <!-- Pestaña 1: Movimientos -->
+    <section id="tab-movimientos" class="space-y-4">
+      <h2 class="text-base font-semibold text-textLight">Nuevo ingreso</h2>
+      
+      <!-- Formulario -->
+      <div class="bg-cardDark p-4 rounded-xl space-y-3 border border-borderSoft/80 shadow-sm">
+        <div>
+          <label class="block text-xs text-textMuted mb-1">Tipo de movimiento</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" id="tipoIngreso" onclick="seleccionarTipoMovimiento('ingreso')" class="rounded-lg border border-accent bg-accent text-white font-semibold py-2.5 transition">＋ Ingreso</button>
+            <button type="button" id="tipoGasto" onclick="seleccionarTipoMovimiento('gasto')" class="rounded-lg border border-borderSoft bg-inputBg text-textMuted font-semibold py-2.5 transition">− Gasto</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-textMuted mb-1">Fecha</label>
+          <input type="date" id="inputFecha" class="w-full bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+        </div>
+        <div>
+          <label class="block text-xs text-textMuted mb-1">De dónde (opcional)</label>
+          <input type="text" id="inputOrigen" placeholder="" class="w-full bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-textMuted mb-1">Categoría</label>
+            <select id="inputCategoria" class="w-full bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+              <!-- Categorías inyectadas vía JS -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-textMuted mb-1">Importe (€)</label>
+            <input type="number" step="0.01" id="inputImporte" placeholder="0.00" class="w-full bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-textMuted mb-1">Notas (opcional)</label>
+          <input type="text" id="inputNotas" placeholder="Detalles extra..." class="w-full bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+        </div>
+        <div class="flex gap-2 mt-2">
+          <button onclick="anadirMovimiento()" id="btnGuardarMovimiento" class="flex-1 bg-accent hover:bg-accentDark text-ink font-bold py-2.5 rounded-lg transition duration-200 text-sm shadow">
+            Añadir ingreso
+          </button>
+          <button onclick="cancelarEdicion()" id="btnCancelarEdicion" class="hidden px-4 py-2.5 rounded-lg text-sm font-semibold text-textMuted border border-borderSoft hover:bg-accent/10 transition">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <h2 class="text-base font-semibold text-textLight pt-2">Historial</h2>
+      
+      <!-- Lista de movimientos -->
+      <div id="listaMovimientos" class="space-y-2">
+        <!-- Inyectado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Pestaña 2: Resumen -->
+    <section id="tab-resumen" class="space-y-4 hidden">
+      <!-- Tarjetas de estadísticas -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="bg-cardDark p-3 rounded-xl text-center border border-borderSoft">
+          <p class="text-[10px] uppercase font-semibold text-textMuted tracking-wider">TOTAL GANADO</p>
+          <p id="statTotal" class="text-base font-bold text-accent mt-1">0.00 €</p>
+        </div>
+        <div class="bg-cardDark p-3 rounded-xl text-center border border-borderSoft">
+          <p class="text-[10px] uppercase font-semibold text-textMuted tracking-wider">Nº INGRESOS</p>
+          <p id="statCount" class="text-base font-bold text-accent mt-1">0</p>
+        </div>
+        <div class="bg-cardDark p-3 rounded-xl text-center border border-borderSoft">
+          <p class="text-[10px] uppercase font-semibold text-textMuted tracking-wider">MEDIA / ING.</p>
+          <p id="statMedia" class="text-base font-bold text-accent mt-1">0.00 €</p>
+        </div>
+      </div>
+      <div class="bg-cardDark p-3 rounded-xl border border-borderSoft flex items-center justify-between">
+        <span class="text-xs font-semibold text-textMuted uppercase tracking-wider">Total gastos</span>
+        <span id="statGastos" class="text-base font-bold text-rose-500">0.00 €</span>
+      </div>
+
+      <!-- Objetivo de Ganancias -->
+      <div class="bg-cardDark p-4 rounded-xl space-y-3 border border-borderSoft">
+        <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider">OBJETIVO MENSUAL <span id="objetivoMesLabel" class="text-accent"></span></h3>
+        <div class="flex space-x-2">
+          <input type="number" step="0.01" id="inputObjetivo" class="flex-1 bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+          <button onclick="guardarObjetivo()" class="bg-accent hover:bg-accentDark text-ink font-semibold px-4 py-2 rounded-lg text-xs transition">
+            Guardar
+          </button>
+        </div>
+        <!-- Barra de Progreso -->
+        <div class="w-full bg-inputBg rounded-full h-3 overflow-hidden border border-borderSoft">
+          <div id="progresoBarra" class="h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <p id="progresoTexto" class="text-xs text-textMuted text-center">Te faltan 0.00 € · 0% del objetivo</p>
+      </div>
+
+      <!-- Gráfico de barras por categoría -->
+      <div class="bg-cardDark p-4 rounded-xl border border-borderSoft">
+        <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider mb-2">INGRESOS POR CATEGORÍA</h3>
+        <div id="graficoCategorias"></div>
+      </div>
+
+      <!-- Ganancias por Categoría -->
+      <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider pt-2">GANANCIAS POR CATEGORÍA</h3>
+      <div id="listaCategorias" class="space-y-2">
+        <!-- Inyectado dinámicamente -->
+      </div>
+
+      <!-- Gestión de Categorías -->
+      <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider pt-2">CATEGORÍAS</h3>
+      <div class="bg-cardDark p-3 rounded-xl border border-borderSoft space-y-2">
+        <div id="listaGestionCategorias" class="flex flex-wrap gap-2">
+          <!-- Inyectado dinámicamente -->
+        </div>
+        <div class="flex gap-2 pt-1">
+          <input type="text" id="inputNuevoIcono" maxlength="4" placeholder="🔸" class="w-12 bg-inputBg border border-borderSoft rounded-lg px-2 py-2 text-center text-sm focus:outline-none focus:border-accent">
+          <input type="text" id="inputNuevaCategoria" placeholder="Nueva categoría..." class="flex-1 bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+          <button onclick="anadirCategoria()" class="bg-accent hover:bg-accentDark text-ink font-semibold px-3 rounded-lg text-xs transition">Añadir</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pestaña 3: Mensual -->
+    <section id="tab-mensual" class="space-y-3 hidden">
+      <div>
+        <h2 class="text-base font-semibold text-textLight">Control mensual</h2>
+        <p class="text-xs text-textMuted">Total ganado agrupado por mes, según la fecha de cada ingreso.</p>
+      </div>
+      <div class="bg-cardDark p-4 rounded-xl border border-borderSoft shadow-sm space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider">EVOLUCIÓN DE GANANCIAS POR MES</h3>
+          <span class="text-[10px] text-textMuted">Total mensual (€)</span>
+        </div>
+        <div id="graficoMensual" class="w-full overflow-hidden">
+          <p class="text-xs text-textMuted text-center py-4">Aún no hay datos para graficar.</p>
+        </div>
+      </div>
+      <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider pt-2">DESGLOSE POR MES</h3>
+      <div id="listaMensual" class="space-y-2 pt-2">
+        <!-- Inyectado dinámicamente -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Navegación Inferior Móvil -->
+  <nav class="app-nav fixed bottom-0 left-0 right-0 bg-cardDark border-t border-borderSoft flex justify-around py-2 z-20">
+    <button onclick="switchTab('movimientos')" id="nav-movimientos" class="flex flex-col items-center text-accent py-1 px-3">
+      <i data-lucide="list-plus" class="w-5 h-5"></i>
+      <span class="text-[11px] mt-1 font-medium">Movimientos</span>
+    </button>
+    <button onclick="switchTab('resumen')" id="nav-resumen" class="flex flex-col items-center text-textMuted py-1 px-3">
+      <i data-lucide="pie-chart" class="w-5 h-5"></i>
+      <span class="text-[11px] mt-1 font-medium">Resumen</span>
+    </button>
+    <button onclick="switchTab('mensual')" id="nav-mensual" class="flex flex-col items-center text-textMuted py-1 px-3">
+      <i data-lucide="calendar" class="w-5 h-5"></i>
+      <span class="text-[11px] mt-1 font-medium">Mensual</span>
+    </button>
+  </nav>
+
+  <!-- Toast de confirmación -->
+  <div id="toast" class="hidden fixed bottom-20 left-1/2 -translate-x-1/2 bg-cardDark2 border border-accent/40 text-textLight text-sm font-medium px-4 py-2 rounded-full shadow-lg z-30 flex items-center gap-2"></div>
+
+  <!-- JavaScript App Logic -->
+  <script>
+    const CATEGORIAS_DEFECTO = [
+      { nombre: "Clases", icono: "📚" },
+      { nombre: "Microworkers", icono: "🖱️" },
+      { nombre: "LEE", icono: "🎓" },
+      { nombre: "Encuestas", icono: "📋" },
+      { nombre: "Venta", icono: "🏷️" },
+      { nombre: "Otros", icono: "✨" }
+    ];
+    const MESES_ES = {
+      1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio",
+      7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
+    };
+
+    let appData = {
+      movimientos: [],
+      objetivo: 80.0,
+      categorias: CATEGORIAS_DEFECTO.map(c => ({ ...c })),
+      ultimoMesCelebrado: ""
+    };
+
+    let db = null;
+    let dbListo = false;
+    let editandoId = null;
+    let tipoMovimientoActual = "ingreso";
+
+    function mesActualKey() {
+      const ahora = new Date();
+      return `${ahora.getFullYear()}-${ahora.getMonth() + 1}`;
+    }
+
+    function generarId() {
+      return `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    function iconoDeCategoria(nombre) {
+      const cat = appData.categorias.find(c => c.nombre === nombre);
+      return cat ? cat.icono : "🔸";
+    }
+
+    function normalizarAppData() {
+      if (!Array.isArray(appData.movimientos)) appData.movimientos = [];
+      appData.movimientos.forEach(m => { if (!m.id) m.id = generarId(); });
+      if (typeof appData.objetivo !== "number") appData.objetivo = 80.0;
+      if (!Array.isArray(appData.categorias) || appData.categorias.length === 0) {
+        appData.categorias = CATEGORIAS_DEFECTO.map(c => ({ ...c }));
+      }
+      if (typeof appData.ultimoMesCelebrado !== "string") appData.ultimoMesCelebrado = "";
+    }
+
+    // Migra datos ya guardados: renombra "Trabajo" -> "Encuestas" y elimina "UJI".
+    // Idempotente: no hace nada si ya se aplicó antes. Devuelve true si cambió algo.
+    function migrarCategorias() {
+      let cambiado = false;
+
+      const trabajo = appData.categorias.find(c => c.nombre === "Trabajo");
+      if (trabajo) {
+        trabajo.nombre = "Encuestas";
+        trabajo.icono = "📋";
+        appData.movimientos.forEach(m => { if (m.categoria === "Trabajo") m.categoria = "Encuestas"; });
+        cambiado = true;
+      }
+
+      const antes = appData.categorias.length;
+      appData.categorias = appData.categorias.filter(c => c.nombre !== "UJI");
+      if (appData.categorias.length !== antes) cambiado = true;
+
+      return cambiado;
+    }
+
+    // Inicialización
+    document.addEventListener("DOMContentLoaded", () => {
+      inicializarFormulario();
+      renderizarTodo();
+      lucide.createIcons();
+      initDb();
+    });
+
+    async function initDb() {
+      try {
+        db = (window.claude && typeof window.claude.use === "function")
+          ? await window.claude.use("db")
+          : null;
+      } catch (e) {
+        db = null;
+      }
+
+      if (!db) {
+        // Sin conexión a la nube disponible: usamos el navegador como respaldo
+        cargarDatosLocal();
+        normalizarAppData();
+        if (migrarCategorias()) guardarDatosLocal();
+        poblarSelectCategoria();
+        renderizarTodo();
+        actualizarInputObjetivo();
+        return;
+      }
+
+      // Escucha en tiempo real: si añades un ingreso desde el móvil,
+      // se refleja aquí también sin recargar.
+      db.doc("app/data").onSnapshot((snap) => {
+        dbListo = true;
+        if (snap.exists) {
+          const data = snap.data() || {};
+          appData.movimientos = Array.isArray(data.movimientos) ? data.movimientos : [];
+          appData.objetivo = typeof data.objetivo === "number" ? data.objetivo : 80.0;
+          appData.categorias = Array.isArray(data.categorias) ? data.categorias : appData.categorias;
+          appData.ultimoMesCelebrado = typeof data.ultimoMesCelebrado === "string" ? data.ultimoMesCelebrado : appData.ultimoMesCelebrado;
+        }
+        normalizarAppData();
+        if (migrarCategorias()) guardarDatos();
+        poblarSelectCategoria();
+        renderizarTodo();
+        actualizarInputObjetivo();
+      }, (err) => {
+        console.error("Error de sincronización con la base de datos", err);
+      });
+    }
+
+    function actualizarInputObjetivo() {
+      const el = document.getElementById("inputObjetivo");
+      if (el && document.activeElement !== el) {
+        el.value = appData.objetivo || 80.0;
+      }
+    }
+
+    // Respaldo local (solo se usa si la base de datos en la nube no está disponible)
+    function cargarDatosLocal() {
+      const guardado = localStorage.getItem("ganancias_data");
+      if (guardado) {
+        try {
+          appData = JSON.parse(guardado);
+        } catch (e) {
+          console.error("Error al cargar localStorage", e);
+        }
+      }
+    }
+
+    function guardarDatosLocal() {
+      try {
+        localStorage.setItem("ganancias_data", JSON.stringify(appData));
+      } catch (e) {
+        console.error("Error al guardar en localStorage", e);
+      }
+    }
+
+    async function guardarDatos() {
+      if (db) {
+        try {
+          await db.doc("app/data").set(appData);
+        } catch (e) {
+          console.error("Error al guardar en la base de datos", e);
+          guardarDatosLocal();
+        }
+      } else {
+        guardarDatosLocal();
+      }
+    }
+
+    function inicializarFormulario() {
+      // Fecha actual por defecto YYYY-MM-DD
+      document.getElementById("inputFecha").value = new Date().toISOString().split("T")[0];
+      poblarSelectCategoria();
+      document.getElementById("inputObjetivo").value = appData.objetivo || 80.0;
+      renderizarGestionCategorias();
+    }
+
+    function poblarSelectCategoria(seleccionar) {
+      const selectCat = document.getElementById("inputCategoria");
+      const actual = seleccionar !== undefined ? seleccionar : selectCat.value;
+      selectCat.innerHTML = appData.categorias.map(c => `<option value="${c.nombre}">${c.icono} ${c.nombre}</option>`).join("");
+      if (actual && appData.categorias.some(c => c.nombre === actual)) {
+        selectCat.value = actual;
+      }
+    }
+
+    function anadirCategoria() {
+      const iconoInput = document.getElementById("inputNuevoIcono");
+      const nombreInput = document.getElementById("inputNuevaCategoria");
+      const nombre = nombreInput.value.trim();
+      const icono = iconoInput.value.trim() || "🔸";
+
+      if (!nombre) {
+        alert("Escribe un nombre para la categoría.");
+        return;
+      }
+      if (appData.categorias.some(c => c.nombre.toLowerCase() === nombre.toLowerCase())) {
+        alert("Ya existe una categoría con ese nombre.");
+        return;
+      }
+
+      appData.categorias.push({ nombre, icono });
+      guardarDatos();
+      poblarSelectCategoria();
+      renderizarGestionCategorias();
+      renderizarTodo();
+      iconoInput.value = "";
+      nombreInput.value = "";
+      mostrarToast(`${icono} Categoría "${nombre}" añadida`);
+    }
+
+    function borrarCategoria(nombre) {
+      if (appData.categorias.length <= 1) {
+        alert("Debe quedar al menos una categoría.");
+        return;
+      }
+      if (!confirm(`¿Eliminar la categoría "${nombre}"? Los ingresos ya guardados con ella conservarán el nombre, pero dejará de estar disponible para nuevos ingresos.`)) return;
+
+      appData.categorias = appData.categorias.filter(c => c.nombre !== nombre);
+      guardarDatos();
+      poblarSelectCategoria();
+      renderizarGestionCategorias();
+      renderizarTodo();
+      mostrarToast(`Categoría "${nombre}" eliminada`);
+    }
+
+    function renderizarGestionCategorias() {
+      const cont = document.getElementById("listaGestionCategorias");
+      if (!cont) return;
+      cont.innerHTML = appData.categorias.map((c, i) => `
+        <span class="anim-item inline-flex items-center gap-1 bg-inputBg border border-borderSoft rounded-full pl-2 pr-1 py-1 text-xs text-textLight" style="animation-delay:${i * 30}ms">
+          <span>${c.icono}</span><span>${c.nombre}</span>
+          <button onclick="borrarCategoria('${c.nombre.replace(/'/g, "\\'")}')" class="text-textMuted hover:text-danger rounded-full p-0.5 transition">
+            <i data-lucide="x" class="w-3 h-3"></i>
+          </button>
+        </span>
+      `).join("");
+      lucide.createIcons();
+    }
+
+    function seleccionarTipoMovimiento(tipo) {
+      tipoMovimientoActual = tipo === "gasto" ? "gasto" : "ingreso";
+      const ingreso = document.getElementById("tipoIngreso");
+      const gasto = document.getElementById("tipoGasto");
+      ingreso.className = tipoMovimientoActual === "ingreso"
+        ? "rounded-lg border border-accent bg-accent text-white font-semibold py-2.5 transition"
+        : "rounded-lg border border-borderSoft bg-inputBg text-textMuted font-semibold py-2.5 transition";
+      gasto.className = tipoMovimientoActual === "gasto"
+        ? "rounded-lg border border-rose-500 bg-rose-500 text-white font-semibold py-2.5 transition"
+        : "rounded-lg border border-borderSoft bg-inputBg text-textMuted font-semibold py-2.5 transition";
+      document.getElementById("btnGuardarMovimiento").textContent = tipoMovimientoActual === "gasto" ? "Añadir gasto" : "Añadir ingreso";
+      document.getElementById("inputImporte").placeholder = tipoMovimientoActual === "gasto" ? "0.00" : "0.00";
+    }
+
+    function anadirMovimiento() {
+      const fecha = document.getElementById("inputFecha").value || new Date().toISOString().split("T")[0];
+      const origen = document.getElementById("inputOrigen").value.trim();
+      const categoria = document.getElementById("inputCategoria").value;
+      const importeRaw = document.getElementById("inputImporte").value.replace(",", ".");
+      const importe = parseFloat(importeRaw);
+      const notas = document.getElementById("inputNotas").value.trim();
+
+      if (isNaN(importe) || importe <= 0) {
+        alert("Introduce un importe válido mayor a 0.");
+        return;
+      }
+
+      const esEdicion = !!editandoId;
+      if (editandoId) {
+        const idx = appData.movimientos.findIndex(m => m.id === editandoId);
+        if (idx !== -1) {
+          appData.movimientos[idx] = { ...appData.movimientos[idx], fecha, origen, categoria, importe, notas, tipo: tipoMovimientoActual };
+        }
+        editandoId = null;
+      } else {
+        appData.movimientos.push({ id: generarId(), fecha, origen, categoria, importe, notas, tipo: tipoMovimientoActual });
+      }
+      guardarDatos();
+      actualizarBotonFormulario();
+
+      // Resetear campos
+      document.getElementById("inputOrigen").value = "";
+      document.getElementById("inputImporte").value = "";
+      document.getElementById("inputNotas").value = "";
+
+      renderizarTodo();
+      mostrarToast(esEdicion ? "✓ Ingreso actualizado" : "✓ Ingreso añadido");
+    }
+
+    function editarMovimiento(id) {
+      const m = appData.movimientos.find(x => x.id === id);
+      if (!m) return;
+      document.getElementById("inputFecha").value = m.fecha;
+      seleccionarTipoMovimiento(m.tipo || "ingreso");
+      document.getElementById("inputOrigen").value = m.origen || "";
+      poblarSelectCategoria(m.categoria);
+      document.getElementById("inputImporte").value = m.importe;
+      document.getElementById("inputNotas").value = m.notas || "";
+      editandoId = id;
+      actualizarBotonFormulario();
+      switchTab("movimientos");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function cancelarEdicion() {
+      editandoId = null;
+      document.getElementById("inputFecha").value = new Date().toISOString().split("T")[0];
+      seleccionarTipoMovimiento("ingreso");
+      document.getElementById("inputOrigen").value = "";
+      poblarSelectCategoria();
+      document.getElementById("inputImporte").value = "";
+      document.getElementById("inputNotas").value = "";
+      actualizarBotonFormulario();
+    }
+
+    function actualizarBotonFormulario() {
+      const btn = document.getElementById("btnGuardarMovimiento");
+      const btnCancel = document.getElementById("btnCancelarEdicion");
+      if (editandoId) {
+        btn.textContent = "Guardar cambios";
+        btnCancel.classList.remove("hidden");
+      } else {
+        btn.textContent = "Añadir ingreso";
+        btnCancel.classList.add("hidden");
+      }
+    }
+
+    function borrarMovimiento(id) {
+      if (confirm("¿Seguro que deseas eliminar este ingreso?")) {
+        appData.movimientos = appData.movimientos.filter(m => m.id !== id);
+        if (editandoId === id) {
+          editandoId = null;
+          actualizarBotonFormulario();
+        }
+        guardarDatos();
+        renderizarTodo();
+        mostrarToast("🗑️ Ingreso eliminado");
+      }
+    }
+
+    function guardarObjetivo() {
+      const val = parseFloat(document.getElementById("inputObjetivo").value.replace(",", "."));
+      appData.objetivo = isNaN(val) ? 80.0 : val;
+      guardarDatos();
+      renderizarTodo();
+      mostrarToast("🎯 Objetivo mensual actualizado");
+    }
+
+    function renderizarTodo() {
+      renderizarMovimientos();
+      renderizarResumen();
+      renderizarMensual();
+      renderizarGestionCategorias();
+    }
+
+    function renderizarMovimientos() {
+      const contenedor = document.getElementById("listaMovimientos");
+      if (appData.movimientos.length === 0) {
+        contenedor.innerHTML = `<p class="text-xs text-textMuted text-center py-6">Aún no hay ingresos registrados.</p>`;
+        return;
+      }
+
+      // Orden descendente (más recientes primero)
+      contenedor.innerHTML = appData.movimientos.slice().reverse().map((m, i) => `
+        <div class="anim-item bg-cardDark p-3 rounded-xl border border-borderSoft flex items-center justify-between" style="animation-delay:${Math.min(i, 10) * 30}ms">
+          <div class="flex items-center gap-2 flex-1 min-w-0 pr-2">
+            <span class="text-lg leading-none">${iconoDeCategoria(m.categoria)}</span>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-textLight truncate">${m.origen} <span class="text-textMuted font-normal">· ${m.tipo === "gasto" ? "Gasto" : m.categoria}</span></p>
+              <p class="text-xs text-textMuted">${m.fecha}${m.notas ? ' · ' + m.notas : ''}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1">
+            <span class="text-sm font-bold whitespace-nowrap mr-1 ${m.tipo === "gasto" ? "text-rose-500" : "text-accent"}">${m.tipo === "gasto" ? "−" : "+"}${m.importe.toFixed(2)} €</span>
+            <button onclick="editarMovimiento('${m.id}')" class="text-textMuted hover:text-accent p-1 transition">
+              <i data-lucide="pencil" class="w-4 h-4"></i>
+            </button>
+            <button onclick="borrarMovimiento('${m.id}')" class="text-textMuted hover:text-danger p-1 transition">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+      lucide.createIcons();
+    }
+
+    function renderizarResumen() {
+      const movs = appData.movimientos;
+      const ingresos = movs.filter(m => m.tipo !== "gasto");
+      const gastos = movs.filter(m => m.tipo === "gasto");
+      const totalIngresos = ingresos.reduce((acc, m) => acc + m.importe, 0);
+      const totalGastos = gastos.reduce((acc, m) => acc + m.importe, 0);
+      const total = totalIngresos - totalGastos;
+      const count = ingresos.length;
+      const media = count > 0 ? totalIngresos / count : 0;
+      const statGastos = document.getElementById("statGastos");
+      if (statGastos) statGastos.textContent = `${totalGastos.toFixed(2)} €`;
+      const objetivo = appData.objetivo || 80.0;
+
+      animarNumero("statTotal", `${total.toFixed(2)} €`);
+      animarNumero("statCount", count);
+      animarNumero("statMedia", `${media.toFixed(2)} €`);
+
+      // Ingresos del mes en curso (el objetivo es mensual)
+      const mesKeyActual = mesActualKey();
+      const [anioActual, numMesActual] = mesKeyActual.split("-").map(Number);
+      const totalMes = movs
+        .filter(m => {
+          if (!m.fecha) return false;
+          const [y, mo] = m.fecha.split("-").map(Number);
+          return y === anioActual && mo === numMesActual;
+        })
+        .reduce((acc, m) => acc + (m.tipo === "gasto" ? -m.importe : m.importe), 0);
+      const nombreMesActual = MESES_ES[numMesActual] || "";
+
+      document.getElementById("objetivoMesLabel").innerText = `· ${nombreMesActual}`;
+
+      // Progreso (sobre el total del mes en curso)
+      const porcentaje = Math.min(100, objetivo > 0 ? (totalMes / objetivo) * 100 : 0);
+      const faltan = Math.max(0, objetivo - totalMes);
+      document.getElementById("progresoBarra").style.width = `${porcentaje}%`;
+      document.getElementById("progresoTexto").innerText = faltan > 0
+        ? `Te faltan ${faltan.toFixed(2)} € · ${porcentaje.toFixed(0)}% del objetivo de ${nombreMesActual}`
+        : `¡Objetivo de ${nombreMesActual} cumplido! · ${totalMes.toFixed(2)} €`;
+
+      // Desglose por categoría (histórico total, no solo del mes)
+      const porCat = {};
+      movs.filter(m => m.tipo !== "gasto").forEach(m => {
+        porCat[m.categoria] = (porCat[m.categoria] || 0) + m.importe;
+      });
+
+      const categoriasOrdenadas = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
+      const contenedorCat = document.getElementById("listaCategorias");
+
+      renderizarGraficoCategorias(categoriasOrdenadas);
+
+      if (categoriasOrdenadas.length === 0) {
+        contenedorCat.innerHTML = `<p class="text-xs text-textMuted text-center py-4">Aún no hay categorías registradas.</p>`;
+      } else {
+        contenedorCat.innerHTML = categoriasOrdenadas.map(([cat, val], i) => {
+          const pct = total > 0 ? (val / total) * 100 : 0;
+          return `
+            <div class="anim-item bg-cardDark px-3 py-2.5 rounded-xl border border-borderSoft flex justify-between items-center text-sm" style="animation-delay:${i * 40}ms">
+              <span class="text-textLight flex items-center gap-2"><span>${iconoDeCategoria(cat)}</span>${cat}</span>
+              <span class="font-bold text-accent">${val.toFixed(2)} € <span class="text-xs text-textMuted font-normal">(${pct.toFixed(0)}%)</span></span>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // Celebración al alcanzar el objetivo del mes (una vez por mes, persistido en la nube)
+      const alcanzado = objetivo > 0 && totalMes >= objetivo;
+      if (alcanzado && appData.ultimoMesCelebrado !== mesKeyActual) {
+        lanzarConfeti();
+        mostrarToast(`🎉 ¡Objetivo de ${nombreMesActual} alcanzado!`);
+        appData.ultimoMesCelebrado = mesKeyActual;
+        guardarDatos();
+      }
+    }
+
+    // Pequeño efecto "pop" cuando un número cambia de valor
+    function animarNumero(id, nuevoValor) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const cambia = el.innerText !== String(nuevoValor);
+      el.innerText = nuevoValor;
+      if (cambia) {
+        el.classList.remove("pulse-pop");
+        void el.offsetWidth; // reinicia la animación
+        el.classList.add("pulse-pop");
+      }
+    }
+
+    // Notificación emergente breve
+    function mostrarToast(mensaje) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+      toast.innerText = mensaje;
+      toast.classList.remove("hidden");
+      toast.classList.remove("toast-out");
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 2200);
+    }
+
+    function lanzarConfeti() {
+      const colores = ['#3B82F6', '#10B981', '#8B5CF6', '#60A5FA', '#34D399', '#A78BFA'];
+      const contenedor = document.createElement('div');
+      contenedor.style.position = 'fixed';
+      contenedor.style.inset = '0';
+      contenedor.style.pointerEvents = 'none';
+      contenedor.style.zIndex = '9999';
+      contenedor.style.overflow = 'hidden';
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.background = colores[Math.floor(Math.random() * colores.length)];
+        p.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+        p.style.animationDelay = (Math.random() * 0.4) + 's';
+        contenedor.appendChild(p);
+      }
+      document.body.appendChild(contenedor);
+      setTimeout(() => contenedor.remove(), 4000);
+    }
+
+    function renderizarGraficoCategorias(categoriasOrdenadas) {
+      const contenedor = document.getElementById("graficoCategorias");
+      if (!contenedor) return;
+
+      if (categoriasOrdenadas.length === 0) {
+        contenedor.innerHTML = `<p class="text-xs text-textMuted text-center py-4">Aún no hay datos para graficar.</p>`;
+        return;
+      }
+
+      const anchoSvg = 320;
+      const altoSvg = 170;
+      const margenSuperior = 22;
+      const margenInferior = 36;
+      const altoBarras = altoSvg - margenSuperior - margenInferior;
+      const espacio = 10;
+      const n = categoriasOrdenadas.length;
+      const anchoBarra = Math.max(18, Math.min(42, (anchoSvg - espacio * (n + 1)) / n));
+      const anchoTotal = anchoBarra * n + espacio * (n + 1);
+      const offsetX = (anchoSvg - anchoTotal) / 2;
+      const maxVal = Math.max(...categoriasOrdenadas.map(([, val]) => val));
+
+      const gradientes = [
+        { id: "gradAzul", desde: "#3B82F6", hasta: "#93C5FD" },
+        { id: "gradVerde", desde: "#10B981", hasta: "#6EE7B7" },
+        { id: "gradMorado", desde: "#8B5CF6", hasta: "#C4B5FD" }
+      ];
+
+      const barras = categoriasOrdenadas.map(([cat, val], i) => {
+        const alto = maxVal > 0 ? (val / maxVal) * altoBarras : 0;
+        const x = offsetX + espacio + i * (anchoBarra + espacio);
+        const y = margenSuperior + (altoBarras - alto);
+        const grad = gradientes[i % gradientes.length].id;
+        return `
+          <text x="${x + anchoBarra / 2}" y="${y - 6}" text-anchor="middle" font-size="10" font-weight="700" fill="#241F3D">${val.toFixed(0)}€</text>
+          <rect x="${x}" y="${y}" width="${anchoBarra}" height="${Math.max(alto, 2)}" rx="6" fill="url(#${grad})" style="animation: fade-in-up 0.4s ease-out ${i * 50}ms both;"></rect>
+          <title>${cat}: ${val.toFixed(2)} €</title>
+          <text x="${x + anchoBarra / 2}" y="${altoSvg - margenInferior + 20}" text-anchor="middle" font-size="16">${iconoDeCategoria(cat)}</text>
+        `;
+      }).join("");
+
+      const defsGrad = gradientes.map(g => `
+        <linearGradient id="${g.id}" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="${g.desde}"></stop>
+          <stop offset="100%" stop-color="${g.hasta}"></stop>
+        </linearGradient>
+      `).join("");
+
+      contenedor.innerHTML = `
+        <svg viewBox="0 0 ${anchoSvg} ${altoSvg}" class="w-full h-auto" role="img" aria-label="Gráfico de barras de ingresos por categoría">
+          <defs>${defsGrad}</defs>
+          <line x1="0" y1="${altoSvg - margenInferior}" x2="${anchoSvg}" y2="${altoSvg - margenInferior}" stroke="#E3E6F7" stroke-width="1"></line>
+          ${barras}
+        </svg>
+      `;
+    }
+
+    function renderizarMensual() {
+      const movs = appData.movimientos;
+      const porMes = {};
+
+      movs.forEach(m => {
+        if (!m.fecha) return;
+        const [year, month] = m.fecha.split("-").map(Number);
+        if (!year || !month) return;
+        const key = `${year}-${String(month).padStart(2, "0")}`;
+        porMes[key] = (porMes[key] || 0) + (m.tipo === "gasto" ? -m.importe : m.importe);
+      });
+
+      const mesesOrdenados = Object.keys(porMes).sort((a, b) => a.localeCompare(b));
+      const mesesRecientes = mesesOrdenados.slice().reverse();
+      const contenedorMensual = document.getElementById("listaMensual");
+
+      renderizarGraficoMensual(mesesOrdenados, porMes);
+
+      if (mesesRecientes.length === 0) {
+        contenedorMensual.innerHTML = `<p class="text-xs text-textMuted text-center py-6">Aún no hay ingresos registrados.</p>`;
+        return;
+      }
+
+      contenedorMensual.innerHTML = mesesRecientes.map((key, i) => {
+        const [year, month] = key.split("-").map(Number);
+        const totalMes = porMes[key];
+        const nombreMes = MESES_ES[month] || `Mes ${month}`;
+        return `
+          <div class="anim-item bg-cardDark px-4 py-3 rounded-xl border border-borderSoft flex justify-between items-center" style="animation-delay:${Math.min(i, 12) * 45}ms">
+            <span class="text-sm font-medium text-textLight">${nombreMes} ${year}</span>
+            <span class="text-sm font-bold text-accent tabular-nums">${totalMes.toFixed(2)} €</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderizarGraficoMensual(mesesOrdenados, porMes) {
+      const contenedor = document.getElementById("graficoMensual");
+      if (!contenedor) return;
+
+      if (!mesesOrdenados.length) {
+        contenedor.innerHTML = `<p class="text-xs text-textMuted text-center py-4">Añade ingresos para ver la evolución mensual.</p>`;
+        return;
+      }
+
+      const datos = mesesOrdenados.map(key => {
+        const [year, month] = key.split("-").map(Number);
+        return {
+          key,
+          label: `${(MESES_ES[month] || "").slice(0, 3)} ${String(year).slice(-2)}`,
+          fullLabel: `${MESES_ES[month]} ${year}`,
+          total: porMes[key]
+        };
+      });
+
+      const ancho = Math.max(300, datos.length * 64 + 24);
+      const alto = 220;
+      const margen = { top: 26, right: 12, bottom: 48, left: 12 };
+      const altoGrafico = alto - margen.top - margen.bottom;
+      const maxTotal = Math.max(...datos.map(d => d.total), 1);
+      const paso = datos.length > 6 ? 1 : 0;
+      const barras = datos.map((d, i) => {
+        const bw = Math.min(42, Math.max(20, (ancho - margen.left - margen.right) / datos.length * .56));
+        const slot = (ancho - margen.left - margen.right) / datos.length;
+        const x = margen.left + i * slot + (slot - bw) / 2;
+        const bh = Math.max(3, (d.total / maxTotal) * (altoGrafico - 10));
+        const y = margen.top + altoGrafico - bh;
+        const delay = i * 70;
+        return `
+          <g class="monthly-bar" style="animation-delay:${delay}ms">
+            <title>${d.fullLabel}: ${d.total.toFixed(2)} €</title>
+            <rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="7" fill="url(#monthlyGradient)" class="monthly-bar-rect">
+              <animate attributeName="height" from="0" to="${bh}" dur=".75s" begin="${delay}ms" fill="freeze" />
+              <animate attributeName="y" from="${margen.top + altoGrafico}" to="${y}" dur=".75s" begin="${delay}ms" fill="freeze" />
+            </rect>
+            <text x="${x + bw / 2}" y="${Math.max(15, y - 7)}" text-anchor="middle" font-size="${datos.length > 8 ? 9 : 10}" font-weight="700" fill="#5B21B6">${d.total.toFixed(0)}€</text>
+            <text x="${x + bw / 2}" y="${alto - 25}" text-anchor="middle" font-size="${datos.length > 10 ? 9 : 10}" fill="#6C6F93">${d.label}</text>
+          </g>
+        `;
+      }).join("");
+
+      const guias = [0, .25, .5, .75, 1].map(p => {
+        const y = margen.top + altoGrafico - altoGrafico * p;
+        return `<line x1="${margen.left}" y1="${y}" x2="${ancho - margen.right}" y2="${y}" stroke="#E3E6F7" stroke-dasharray="3 5" stroke-width="1"/>`;
+      }).join("");
+
+      contenedor.innerHTML = `
+        <div class="monthly-chart-scroll">
+          <svg viewBox="0 0 ${ancho} ${alto}" role="img" aria-label="Gráfica de ganancias por mes" style="display:block;width:100%;min-width:${Math.min(ancho, 300)}px;height:auto;overflow:visible">
+            <defs>
+              <linearGradient id="monthlyGradient" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#7C3AED"/>
+                <stop offset="100%" stop-color="#C4B5FD"/>
+              </linearGradient>
+            </defs>
+            ${guias}
+            ${barras}
+          </svg>
+        </div>
+        <p class="text-[10px] text-textMuted text-center mt-1">Cada barra representa el total acumulado de ese mes.</p>
+      `;
+    }
+
+    // Cambio de pestañas
+    function switchTab(tabName) {
+      ["movimientos", "resumen", "mensual"].forEach(t => {
+        const sec = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`nav-${t}`);
+        if (t === tabName) {
+          sec.classList.remove("hidden");
+          sec.classList.remove("tab-anim");
+          void sec.offsetWidth;
+          sec.classList.add("tab-anim");
+          btn.classList.add("text-accent");
+          btn.classList.remove("text-textMuted");
+          const icono = btn.querySelector("i");
+          if (icono) {
+            icono.classList.remove("icon-pop");
+            void icono.offsetWidth;
+            icono.classList.add("icon-pop");
+          }
+        } else {
+          sec.classList.add("hidden");
+          btn.classList.remove("text-accent");
+          btn.classList.add("text-textMuted");
+        }
+      });
+    }
+
+    // Copia de seguridad
+    async function exportarDatos() {
+      const nombreArchivo = `ganancias_backup_${new Date().toISOString().split("T")[0]}.json`;
+      const contenido = JSON.stringify(appData, null, 2);
+
+      try {
+        const downloads = (window.claude && typeof window.claude.use === "function")
+          ? await window.claude.use("downloads")
+          : null;
+
+        if (downloads) {
+          await downloads.save({ filename: nombreArchivo, data: contenido });
+          mostrarToast("⬇️ Copia de seguridad descargada");
+          return;
+        }
+      } catch (e) {
+        console.error("Error al descargar con downloads", e);
+      }
+
+      // Respaldo: descarga clásica (funciona fuera del visor de artifacts, p. ej. abierto como archivo local)
+      try {
+        const blob = new Blob([contenido], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = nombreArchivo;
+        a.click();
+        URL.revokeObjectURL(url);
+        mostrarToast("⬇️ Copia de seguridad descargada");
+      } catch (e) {
+        alert("No se pudo generar la copia de seguridad.");
+      }
+    }
+
+    function importarDatos(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data && Array.isArray(data.movimientos)) {
+            appData = data;
+            normalizarAppData();
+            editandoId = null;
+            actualizarBotonFormulario();
+            poblarSelectCategoria();
+            guardarDatos();
+            renderizarTodo();
+            alert("¡Datos importados correctamente!");
+          } else {
+            alert("El archivo subido no tiene un formato válido.");
+          }
+        } catch (err) {
+          alert("Error al leer el archivo JSON.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Microinteracciones: ondas al pulsar y animación de entrada al aparecer.
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const rect = button.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "motion-ripple";
+      const diameter = Math.max(rect.width, rect.height) * 0.7;
+      ripple.style.width = ripple.style.height = `${diameter}px`;
+      ripple.style.left = `${event.clientX - rect.left - diameter / 2}px`;
+      ripple.style.top = `${event.clientY - rect.top - diameter / 2}px`;
+      button.appendChild(ripple);
+      ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+    });
+
+    // Reanima los títulos de la pestaña al cambiar de sección.
+    const originalSwitchTab = switchTab;
+    switchTab = function(tabName) {
+      originalSwitchTab(tabName);
+      const section = document.getElementById(`tab-${tabName}`);
+      const heading = section && section.querySelector("h2, h3");
+      if (heading) {
+        heading.classList.remove("section-heading-animate");
+        void heading.offsetWidth;
+        heading.classList.add("section-heading-animate");
+      }
+    };
+
+    // Animación de aparición para elementos nuevos sin alterar su contenido.
+    if ("IntersectionObserver" in window) {
+      const entranceObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            entranceObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08 });
+      document.querySelectorAll("main section > h2, main section > h3").forEach(el => entranceObserver.observe(el));
+    }
+
+  </script>
+</body>
+</html>
+</body></html>
