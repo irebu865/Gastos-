@@ -517,6 +517,19 @@
         <span class="text-xs font-semibold text-textMuted uppercase tracking-wider">Total gastos</span>
         <span id="statGastos" class="text-base font-bold text-rose-500">0.00 €</span>
       </div>
+      <!-- Límite de gastos mensual -->
+      <div class="bg-cardDark p-4 rounded-xl border border-borderSoft space-y-3" id="limiteGastosCard">
+        <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider">LÍMITE DE GASTOS · <span id="limiteGastosMesLabel" class="text-rose-500"></span></h3>
+        <div class="flex gap-2">
+          <input type="number" min="0" step="0.01" id="inputLimiteGastos" placeholder="Ej. 100" class="flex-1 min-w-0 bg-inputBg border border-borderSoft rounded-lg px-3 py-2 text-textLight text-sm focus:outline-none focus:border-accent">
+          <button onclick="guardarLimiteGastos()" class="bg-rose-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition">Guardar</button>
+        </div>
+        <div class="w-full bg-inputBg rounded-full h-3 overflow-hidden border border-borderSoft">
+          <div id="limiteGastosBarra" class="h-full transition-all duration-500" style="width:0%;background:#F43F5E"></div>
+        </div>
+        <p id="limiteGastosTexto" class="text-xs text-textMuted text-center">Configura un límite para controlar tus gastos del mes.</p>
+        <div id="alertaLimiteGastos" class="hidden rounded-lg border border-rose-300 bg-rose-50 text-rose-700 p-3 text-sm font-semibold" role="alert"></div>
+      </div>
 
       <!-- Objetivo de Ganancias -->
       <div class="bg-cardDark p-4 rounded-xl space-y-3 border border-borderSoft">
@@ -534,9 +547,15 @@
         <p id="progresoTexto" class="text-xs text-textMuted text-center">Te faltan 0.00 € · 0% del objetivo</p>
       </div>
 
-      <!-- Gráfico de barras por categoría -->
+      <!-- Gráfico por categoría con selector de ingresos/gastos -->
       <div class="bg-cardDark p-4 rounded-xl border border-borderSoft">
-        <h3 class="text-xs font-bold text-textMuted uppercase tracking-wider mb-2">INGRESOS POR CATEGORÍA</h3>
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h3 id="tituloGraficoCategorias" class="text-xs font-bold text-textMuted uppercase tracking-wider">INGRESOS POR CATEGORÍA</h3>
+        </div>
+        <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-inputBg border border-borderSoft mb-3">
+          <button type="button" id="verGraficoIngresos" onclick="cambiarGraficoTipo('ingreso')" class="rounded-lg px-3 py-2 text-sm font-semibold bg-accent text-white transition">Ingresos</button>
+          <button type="button" id="verGraficoGastos" onclick="cambiarGraficoTipo('gasto')" class="rounded-lg px-3 py-2 text-sm font-semibold text-textMuted transition">Gastos</button>
+        </div>
         <div id="graficoCategorias"></div>
       </div>
 
@@ -620,6 +639,7 @@
     let appData = {
       movimientos: [],
       objetivo: 80.0,
+      limiteGastos: 100.0,
       categorias: CATEGORIAS_DEFECTO.map(c => ({ ...c })),
       ultimoMesCelebrado: ""
     };
@@ -628,6 +648,7 @@
     let dbListo = false;
     let editandoId = null;
     let tipoMovimientoActual = "ingreso";
+    let tipoGraficoActual = "ingreso";
 
     function mesActualKey() {
       const ahora = new Date();
@@ -739,6 +760,7 @@
           console.error("Error al cargar localStorage", e);
         }
       }
+      if (typeof appData.limiteGastos !== "number") appData.limiteGastos = 100.0;
     }
 
     function guardarDatosLocal() {
@@ -941,6 +963,20 @@
       mostrarToast("🎯 Objetivo mensual actualizado");
     }
 
+    function guardarLimiteGastos() {
+      const campo = document.getElementById("inputLimiteGastos");
+      const valor = Number(String(campo.value).replace(",", "."));
+      if (!campo.value.trim() || !Number.isFinite(valor) || valor <= 0) {
+        mostrarToast("Introduce un límite de gastos mayor que 0 €");
+        campo.focus();
+        return;
+      }
+      appData.limiteGastos = valor;
+      guardarDatos();
+      renderizarTodo();
+      mostrarToast(`🔔 Límite mensual fijado en ${valor.toFixed(2)} €`);
+    }
+
     function renderizarTodo() {
       renderizarMovimientos();
       renderizarResumen();
@@ -991,6 +1027,46 @@
       const media = count > 0 ? totalIngresos / count : 0;
       const statGastos = document.getElementById("statGastos");
       if (statGastos) statGastos.textContent = `${totalGastos.toFixed(2)} €`;
+
+      // Límite de gastos del mes actual y alerta visual al alcanzarlo.
+      const claveMesGastos = mesActualKey();
+      const [anioGastos, numeroMesGastos] = claveMesGastos.split("-").map(Number);
+      const gastosMesActual = movs.filter(m => {
+        if (m.tipo !== "gasto" || !m.fecha) return false;
+        const [y, mo] = m.fecha.split("-").map(Number);
+        return y === anioGastos && mo === numeroMesGastos;
+      }).reduce((acc, m) => acc + Number(m.importe || 0), 0);
+      const limiteGastos = Number(appData.limiteGastos) > 0 ? Number(appData.limiteGastos) : 100.0;
+      const porcentajeGastos = (gastosMesActual / limiteGastos) * 100;
+      const barraGastos = document.getElementById("limiteGastosBarra");
+      const textoGastos = document.getElementById("limiteGastosTexto");
+      const alertaGastos = document.getElementById("alertaLimiteGastos");
+      const etiquetaMesGastos = document.getElementById("limiteGastosMesLabel");
+      const campoLimiteGastos = document.getElementById("inputLimiteGastos");
+      if (etiquetaMesGastos) etiquetaMesGastos.textContent = MESES_ES[numeroMesGastos] || "";
+      if (campoLimiteGastos && document.activeElement !== campoLimiteGastos) campoLimiteGastos.value = limiteGastos;
+      if (barraGastos) {
+        barraGastos.style.width = `${Math.min(100, porcentajeGastos)}%`;
+        barraGastos.style.background = porcentajeGastos >= 100 ? "#E11D48" : porcentajeGastos >= 80 ? "#F97316" : "#F43F5E";
+      }
+      if (textoGastos) {
+        textoGastos.textContent = porcentajeGastos >= 100
+          ? `Has gastado ${gastosMesActual.toFixed(2)} € de ${limiteGastos.toFixed(2)} € este mes.`
+          : `Llevas ${gastosMesActual.toFixed(2)} € de ${limiteGastos.toFixed(2)} € · ${porcentajeGastos.toFixed(0)}% del límite.`;
+      }
+      if (alertaGastos) {
+        if (porcentajeGastos >= 100) {
+          alertaGastos.classList.remove("hidden");
+          alertaGastos.textContent = `⚠️ ¡Límite de gastos alcanzado! Has superado tu presupuesto mensual por ${(gastosMesActual - limiteGastos).toFixed(2)} €.`;
+        } else if (porcentajeGastos >= 80) {
+          alertaGastos.classList.remove("hidden");
+          alertaGastos.textContent = `🔔 ¡Atención! Ya has utilizado el ${porcentajeGastos.toFixed(0)}% de tu límite mensual de gastos.`;
+          alertaGastos.className = "rounded-lg border border-orange-300 bg-orange-50 text-orange-700 p-3 text-sm font-semibold";
+        } else {
+          alertaGastos.classList.add("hidden");
+          alertaGastos.className = "hidden rounded-lg border border-rose-300 bg-rose-50 text-rose-700 p-3 text-sm font-semibold";
+        }
+      }
       const objetivo = appData.objetivo || 80.0;
 
       animarNumero("statTotal", `${total.toFixed(2)} €`);
@@ -1019,30 +1095,8 @@
         ? `Te faltan ${faltan.toFixed(2)} € · ${porcentaje.toFixed(0)}% del objetivo de ${nombreMesActual}`
         : `¡Objetivo de ${nombreMesActual} cumplido! · ${totalMes.toFixed(2)} €`;
 
-      // Desglose por categoría (histórico total, no solo del mes)
-      const porCat = {};
-      movs.filter(m => m.tipo !== "gasto").forEach(m => {
-        porCat[m.categoria] = (porCat[m.categoria] || 0) + m.importe;
-      });
-
-      const categoriasOrdenadas = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
-      const contenedorCat = document.getElementById("listaCategorias");
-
-      renderizarGraficoCategorias(categoriasOrdenadas);
-
-      if (categoriasOrdenadas.length === 0) {
-        contenedorCat.innerHTML = `<p class="text-xs text-textMuted text-center py-4">Aún no hay categorías registradas.</p>`;
-      } else {
-        contenedorCat.innerHTML = categoriasOrdenadas.map(([cat, val], i) => {
-          const pct = total > 0 ? (val / total) * 100 : 0;
-          return `
-            <div class="anim-item bg-cardDark px-3 py-2.5 rounded-xl border border-borderSoft flex justify-between items-center text-sm" style="animation-delay:${i * 40}ms">
-              <span class="text-textLight flex items-center gap-2"><span>${iconoDeCategoria(cat)}</span>${cat}</span>
-              <span class="font-bold text-accent">${val.toFixed(2)} € <span class="text-xs text-textMuted font-normal">(${pct.toFixed(0)}%)</span></span>
-            </div>
-          `;
-        }).join("");
-      }
+      // Desglose por categoría para el tipo elegido en el gráfico.
+      renderizarDesgloseCategorias();
 
       // Celebración al alcanzar el objetivo del mes (una vez por mes, persistido en la nube)
       const alcanzado = objetivo > 0 && totalMes >= objetivo;
@@ -1051,6 +1105,57 @@
         mostrarToast(`🎉 ¡Objetivo de ${nombreMesActual} alcanzado!`);
         appData.ultimoMesCelebrado = mesKeyActual;
         guardarDatos();
+      }
+    }
+
+    function cambiarGraficoTipo(tipo) {
+      tipoGraficoActual = tipo === "gasto" ? "gasto" : "ingreso";
+      const btnIngresos = document.getElementById("verGraficoIngresos");
+      const btnGastos = document.getElementById("verGraficoGastos");
+      const esGasto = tipoGraficoActual === "gasto";
+
+      btnIngresos.className = esGasto
+        ? "rounded-lg px-3 py-2 text-sm font-semibold text-textMuted transition"
+        : "rounded-lg px-3 py-2 text-sm font-semibold bg-accent text-white transition";
+      btnGastos.className = esGasto
+        ? "rounded-lg px-3 py-2 text-sm font-semibold bg-rose-500 text-white transition"
+        : "rounded-lg px-3 py-2 text-sm font-semibold text-textMuted transition";
+
+      const titulo = document.getElementById("tituloGraficoCategorias");
+      if (titulo) titulo.textContent = esGasto ? "GASTOS POR CATEGORÍA" : "INGRESOS POR CATEGORÍA";
+      renderizarDesgloseCategorias();
+    }
+
+    function renderizarDesgloseCategorias() {
+      const esGasto = tipoGraficoActual === "gasto";
+      const movimientosTipo = appData.movimientos.filter(m => esGasto ? m.tipo === "gasto" : m.tipo !== "gasto");
+      const porCat = {};
+      movimientosTipo.forEach(m => {
+        const categoria = m.categoria || (esGasto ? "Otros gastos" : "Otros ingresos");
+        porCat[categoria] = (porCat[categoria] || 0) + Number(m.importe || 0);
+      });
+
+      const categoriasOrdenadas = Object.entries(porCat).sort((a, b) => b[1] - a[1]);
+      const contenedorCat = document.getElementById("listaCategorias");
+      const tituloLista = document.querySelector("#listaCategorias")?.previousElementSibling;
+      if (tituloLista) tituloLista.textContent = esGasto ? "GASTOS POR CATEGORÍA" : "INGRESOS POR CATEGORÍA";
+
+      renderizarGraficoCategorias(categoriasOrdenadas, esGasto);
+
+      if (!contenedorCat) return;
+      if (categoriasOrdenadas.length === 0) {
+        contenedorCat.innerHTML = `<p class="text-xs text-textMuted text-center py-4">Aún no hay ${esGasto ? "gastos" : "ingresos"} registrados.</p>`;
+      } else {
+        const totalTipo = categoriasOrdenadas.reduce((acc, item) => acc + item[1], 0);
+        contenedorCat.innerHTML = categoriasOrdenadas.map(([cat, val], i) => {
+          const pct = totalTipo > 0 ? (val / totalTipo) * 100 : 0;
+          return `
+            <div class="anim-item bg-cardDark px-3 py-2.5 rounded-xl border border-borderSoft flex justify-between items-center text-sm" style="animation-delay:${i * 40}ms">
+              <span class="text-textLight flex items-center gap-2"><span>${iconoDeCategoria(cat)}</span>${cat}</span>
+              <span class="font-bold ${esGasto ? "text-rose-500" : "text-accent"}">${val.toFixed(2)} € <span class="text-xs text-textMuted font-normal">(${pct.toFixed(0)}%)</span></span>
+            </div>
+          `;
+        }).join("");
       }
     }
 
@@ -1101,7 +1206,7 @@
       setTimeout(() => contenedor.remove(), 4000);
     }
 
-    function renderizarGraficoCategorias(categoriasOrdenadas) {
+    function renderizarGraficoCategorias(categoriasOrdenadas, esGasto = false) {
       const contenedor = document.getElementById("graficoCategorias");
       if (!contenedor) return;
 
